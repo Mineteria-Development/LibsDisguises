@@ -19,7 +19,6 @@ import me.libraryaddict.disguise.utilities.DisguiseParser.DisguiseParseException
 import me.libraryaddict.disguise.utilities.DisguiseParser.DisguisePerm;
 import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import me.libraryaddict.disguise.utilities.LibsMsg;
-import me.libraryaddict.disguise.utilities.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -50,57 +49,14 @@ import java.util.HashSet;
 
 public class DisguiseListener implements Listener {
 
-    private String currentVersion;
     private HashMap<String, Boolean[]> disguiseClone = new HashMap<>();
     private HashMap<String, Disguise> disguiseEntity = new HashMap<>();
     private HashMap<String, String[]> disguiseModify = new HashMap<>();
     private HashMap<String, BukkitRunnable> disguiseRunnable = new HashMap<>();
-    private String latestVersion;
     private LibsDisguises plugin;
-    private BukkitTask updaterTask;
 
     public DisguiseListener(LibsDisguises libsDisguises) {
         plugin = libsDisguises;
-
-        if (plugin.getConfig().getBoolean("NotifyUpdate")) {
-            currentVersion = plugin.getDescription().getVersion();
-
-            updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        UpdateChecker updateChecker = new UpdateChecker();
-                        updateChecker.checkUpdate("v" + currentVersion);
-
-                        latestVersion = updateChecker.getLatestVersion();
-
-                        if (latestVersion == null) {
-                            return;
-                        }
-
-                        latestVersion = "v" + latestVersion;
-
-                        Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                            @Override
-                            public void run() {
-                                for (Player p : Bukkit.getOnlinePlayers()) {
-                                    if (!p.hasPermission(DisguiseConfig.getUpdateNotificationPermission())) {
-                                        continue;
-                                    }
-
-                                    p.sendMessage(LibsMsg.UPDATE_READY.get(currentVersion, latestVersion));
-                                }
-                            }
-                        });
-                    }
-                    catch (Exception ex) {
-                        DisguiseUtilities.getLogger().warning(String
-                                .format("Failed to check for update: %s", ex.getMessage()));
-                    }
-                }
-            }, 0, (20 * 60 * 60 * 6)); // Check every 6 hours
-            // 20 ticks * 60 seconds * 60 minutes * 6 hours
-        }
 
         if (!DisguiseConfig.isSaveEntityDisguises())
             return;
@@ -132,7 +88,6 @@ public class DisguiseListener implements Listener {
         }
 
         disguiseClone.clear();
-        updaterTask.cancel();
     }
 
     private void checkPlayerCanBlowDisguise(Player player) {
@@ -283,10 +238,6 @@ public class DisguiseListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-
-        if (latestVersion != null && p.hasPermission(DisguiseConfig.getUpdateNotificationPermission())) {
-            p.sendMessage(LibsMsg.UPDATE_READY.get(currentVersion, latestVersion));
-        }
 
         if (DisguiseConfig.isBedPacketsEnabled()) {
             chunkMove(p, p.getLocation(), null);

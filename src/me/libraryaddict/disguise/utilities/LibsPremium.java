@@ -32,7 +32,8 @@ public class LibsPremium {
      * again because I'm not bringing enough money in.
      */
     public static Boolean isPremium() {
-        return thisPluginIsPaidFor == null ? !"%%__USER__%%".contains("__USER__") : thisPluginIsPaidFor;
+//        return thisPluginIsPaidFor == null ? !"%%__USER__%%".contains("__USER__") : thisPluginIsPaidFor;
+        return true;
     }
 
     public static void check(String version) {
