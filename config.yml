@@ -1,6 +1,3 @@
-# Shall I notify people of a LibsDisguises update?
-NotifyUpdate: true
-
 # The disguise plugin stores all GameProfiles inside a file called 'cache.yml'
 # This means that the plugin doesn't need to constantly call Mojang just to find a skin for an offline player
 # However some people may prefer to disable this.
@@ -45,9 +42,6 @@ Scoreboard:
   Collisions: true
   # Should it modify the scoreboard teams to disable seeing friendly invisibles?
   SeeFriendlyInvisibles: true
-
-# Whats the permission to get the notification?
-Permission: 'libsdisguises.update'
 
 # Whats the max size allowed for command disguiseradius
 DisguiseRadiusMax: 50

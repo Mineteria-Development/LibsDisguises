@@ -53,7 +53,6 @@ public class DisguiseConfig {
     private static boolean stopShulkerDisguisesFromMoving;
     private static boolean targetDisguises;
     private static boolean undisguiseSwitchWorlds;
-    private static String updateNotificationPermission;
     private static boolean viewSelfDisguise;
     private static boolean witherSkullEnabled;
     private static DisguisePushing disablePushing = DisguisePushing.MODIFY_SCOREBOARD;
@@ -139,10 +138,6 @@ public class DisguiseConfig {
         return maxClonedDisguises;
     }
 
-    public static String getUpdateNotificationPermission() {
-        return updateNotificationPermission;
-    }
-
     public static boolean isSaveGameProfiles() {
         return saveCache;
     }
@@ -195,7 +190,6 @@ public class DisguiseConfig {
         setSheepDyeable(config.getBoolean("DyeableSheep"));
         setWolfDyeable(config.getBoolean("DyeableWolf"));
         setUndisguiseOnWorldChange(config.getBoolean("UndisguiseOnWorldChange"));
-        setUpdateNotificationPermission(config.getString("Permission"));
         setStopShulkerDisguisesFromMoving(config.getBoolean("StopShulkerDisguisesFromMoving", true));
         setHideDisguisedPlayers(config.getBoolean("HideDisguisedPlayersFromTab"));
         setShowDisguisedPlayersInTab(config.getBoolean("ShowPlayerDisguisesInTab"));
@@ -589,10 +583,6 @@ public class DisguiseConfig {
 
     public static void setUndisguiseOnWorldChange(boolean isUndisguise) {
         undisguiseSwitchWorlds = isUndisguise;
-    }
-
-    public static void setUpdateNotificationPermission(String newPermission) {
-        updateNotificationPermission = newPermission;
     }
 
     /**
