@@ -40,8 +40,6 @@ public class LibsDisguises extends JavaPlugin implements Listener {
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
 
-        DisguiseConfig.initConfig(getConfig());
-
         PacketsManager.addPacketListeners();
 
         listener = new DisguiseListener(this);
@@ -64,7 +62,9 @@ public class LibsDisguises extends JavaPlugin implements Listener {
     public void registerValues(WorldLoadEvent event) {
         if (valuesRegistered) return;
         valuesRegistered = true;
+        DisguiseConfig.initConfig(getConfig());
         getLogger().info("A world has been loaded. Registering Disguise Values");
+
         for (DisguiseType disguiseType : DisguiseType.values()) {
             if (disguiseType.getEntityType() == null) {
                 continue;

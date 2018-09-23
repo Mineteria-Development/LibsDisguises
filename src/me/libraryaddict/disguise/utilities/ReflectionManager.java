@@ -8,6 +8,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import com.comphenix.protocol.wrappers.nbt.NbtCompound;
 import com.comphenix.protocol.wrappers.nbt.NbtWrapper;
 import com.google.common.base.Optional;
+import me.libraryaddict.disguise.LibsDisguises;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.bukkit.*;
@@ -144,8 +145,8 @@ public class ReflectionManager {
 
             return entityObject;
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        catch (Exception ignored) {
+            LibsDisguises.getInstance().getLogger().info("Failed to create entity instance. This is normal for Minteria.");
         }
 
         return null;
