@@ -31,33 +31,35 @@ public class ReflectionManager {
     private static Field trackerField;
     public static Field entityCountField;
 
+    private static void getDamageAndIdleSoundMethod() throws Exception {
+        Object entity = createEntityInstance("Cow");
+
+        for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
+            if (method.getReturnType() != float.class)
+                continue;
+
+            if (!Modifier.isProtected(method.getModifiers()))
+                continue;
+
+            if (method.getParameterTypes().length != 0)
+                continue;
+
+            method.setAccessible(true);
+
+            float value = (Float) method.invoke(entity);
+
+            if ((float) method.invoke(entity) != 0.4f)
+                continue;
+
+            damageAndIdleSoundMethod = method;
+            break;
+        }
+    }
+
     public static void init() {
         try {
-            Object entity = createEntityInstance("Cow");
-
-            for (Method method : getNmsClass("EntityLiving").getDeclaredMethods()) {
-                if (method.getReturnType() != float.class)
-                    continue;
-
-                if (!Modifier.isProtected(method.getModifiers()))
-                    continue;
-
-                if (method.getParameterTypes().length != 0)
-                    continue;
-
-                method.setAccessible(true);
-
-                float value = (Float) method.invoke(entity);
-
-                if ((float) method.invoke(entity) != 0.4f)
-                    continue;
-
-                damageAndIdleSoundMethod = method;
-                break;
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
+            getDamageAndIdleSoundMethod();
+        } catch (Exception ignored) {
         }
 
         craftItemClass = getCraftClass("inventory.CraftItemStack");
@@ -567,7 +569,12 @@ public class ReflectionManager {
 
     public static Float getSoundModifier(Object entity) {
         try {
-            return (Float) damageAndIdleSoundMethod.invoke(entity);
+            if (damageAndIdleSoundMethod == null && Bukkit.getWorlds().size() > 0) {
+                getDamageAndIdleSoundMethod();
+            }
+            if (damageAndIdleSoundMethod != null) {
+                return (Float) damageAndIdleSoundMethod.invoke(entity);
+            }
         }
         catch (Exception ignored) {
         }
