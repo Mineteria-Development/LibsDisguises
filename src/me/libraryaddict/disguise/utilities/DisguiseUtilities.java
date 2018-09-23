@@ -76,7 +76,7 @@ public class DisguiseUtilities {
     private static HashMap<String, ArrayList<Object>> runnables = new HashMap<>();
     private static HashSet<UUID> selfDisguised = new HashSet<>();
     private static Thread mainThread;
-    private static PacketContainer spawnChunk;
+    private static PacketContainer spawnChunk = null;
     private static HashMap<UUID, String> preDisguiseTeam = new HashMap<>();
     private static File profileCache = new File("plugins/LibsDisguises/GameProfiles"), savedDisguises = new File(
             "plugins/LibsDisguises/SavedDisguises");
@@ -501,6 +501,11 @@ public class DisguiseUtilities {
     }
 
     public static PacketContainer[] getBedChunkPacket(Location newLoc, Location oldLoc) {
+        // Lazy loaded for Mineteria
+        if (spawnChunk == null) {
+            createSpawnChunk();
+        }
+
         int i = 0;
 
         PacketContainer[] packets = new PacketContainer[(newLoc != null ? 1 : 0) + (oldLoc != null ? 1 : 0)];
@@ -849,21 +854,7 @@ public class DisguiseUtilities {
         return gson;
     }
 
-    public static void init(LibsDisguises disguises) {
-        libsDisguises = disguises;
-        methods = BackwardsSupport.getMethods();
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
-        gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
-        gsonBuilder.registerTypeAdapter(WrappedBlockData.class, new SerializerWrappedBlockData());
-        gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
-        gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher());
-        gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
-        gsonBuilder.registerTypeAdapter(ItemStack.class, new SerializerItemStack());
-
-        gson = gsonBuilder.create();
-
+    private static void createSpawnChunk() {
         try {
             Object server = ReflectionManager.getNmsMethod("MinecraftServer", "getServer").invoke(null);
             Object world = ((List) server.getClass().getField("worlds").get(server)).get(0);
@@ -904,6 +895,27 @@ public class DisguiseUtilities {
             spawnChunk = ProtocolLibrary.getProtocolManager()
                     .createPacketConstructor(PacketType.Play.Server.MAP_CHUNK, bedChunk, 65535)
                     .createPacket(bedChunk, 65535);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void init(LibsDisguises disguises) {
+        libsDisguises = disguises;
+        methods = BackwardsSupport.getMethods();
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(MetaIndex.class, new SerializerMetaIndex());
+        gsonBuilder.registerTypeAdapter(WrappedGameProfile.class, new SerializerGameProfile());
+        gsonBuilder.registerTypeAdapter(WrappedBlockData.class, new SerializerWrappedBlockData());
+        gsonBuilder.registerTypeAdapter(Disguise.class, new SerializerDisguise());
+        gsonBuilder.registerTypeAdapter(FlagWatcher.class, new SerializerFlagWatcher());
+        gsonBuilder.registerTypeAdapter(PropertyMap.class, new PropertyMap.Serializer());
+        gsonBuilder.registerTypeAdapter(ItemStack.class, new SerializerItemStack());
+
+        gson = gsonBuilder.create();
+
+        try {
 
             Field threadField = ReflectionManager.getNmsField("MinecraftServer", "primaryThread");
             threadField.setAccessible(true);
