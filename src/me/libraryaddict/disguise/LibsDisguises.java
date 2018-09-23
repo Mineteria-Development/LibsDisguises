@@ -32,6 +32,7 @@ public class LibsDisguises extends JavaPlugin {
             saveResource("disguises.yml", false);
         }
 
+        ReflectionManager.init();
         PacketsManager.init(this);
         DisguiseUtilities.init(this);
 

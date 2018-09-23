@@ -21,17 +21,17 @@ import java.util.UUID;
 
 public class ReflectionManager {
     private static final String bukkitVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
-    private static final Class<?> craftItemClass;
+    private static Class<?> craftItemClass;
     private static Method damageAndIdleSoundMethod;
-    private static final Field entitiesField;
-    private static final Constructor<?> boundingBoxConstructor;
-    private static final Method setBoundingBoxMethod;
-    private static final Method ihmGet;
-    private static final Field pingField;
-    private static final Field trackerField;
-    public static final Field entityCountField;
+    private static Field entitiesField;
+    private static Constructor<?> boundingBoxConstructor;
+    private static Method setBoundingBoxMethod;
+    private static Method ihmGet;
+    private static Field pingField;
+    private static Field trackerField;
+    public static Field entityCountField;
 
-    static {
+    public static void init() {
         try {
             Object entity = createEntityInstance("Cow");
 
