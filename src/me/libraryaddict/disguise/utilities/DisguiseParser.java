@@ -701,6 +701,8 @@ public class DisguiseParser {
             HashMap<ArrayList<String>, Boolean> optionPermissions, ArrayList<String> usedOptions,
             String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
             DisguiseParseException {
+        if (disguise.getWatcher() == null) return;
+
         Method[] methods = ReflectionFlagWatchers.getDisguiseWatcherMethods(disguise.getWatcher().getClass());
 
         for (int i = 0; i < args.length; i += 2) {

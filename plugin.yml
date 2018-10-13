@@ -5,6 +5,7 @@ version: ${project.version}
 author: libraryaddict
 authors: [Byteflux, Navid K.]
 depend: [ProtocolLib]
+load: STARTUP
 permissions:
     libsdisguises.reload:
         description: Allows the user to reload LibsDisguises.

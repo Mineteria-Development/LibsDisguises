@@ -88,6 +88,7 @@ public abstract class Disguise {
 
         if (getWatcher() == null) {
             try {
+                if (getType().getWatcherClass() == null) return;
                 // Construct the FlagWatcher from the stored class
                 setWatcher(getType().getWatcherClass().getConstructor(Disguise.class).newInstance(this));
             }
@@ -746,7 +747,7 @@ public abstract class Disguise {
                     getType().getWatcherClass().getSimpleName() + " for DisguiseType " + getType().name());
         }
 
-        watcher = newWatcher;
+        this.watcher = newWatcher;
 
         if (getEntity() != null) {
             setupWatcher();

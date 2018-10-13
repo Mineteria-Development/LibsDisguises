@@ -11,6 +11,7 @@ import me.libraryaddict.disguise.utilities.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +21,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class LibsDisguises extends JavaPlugin implements Listener {
+
     private static LibsDisguises instance;
     private DisguiseListener listener;
     private boolean valuesRegistered = false;
@@ -42,9 +44,6 @@ public class LibsDisguises extends JavaPlugin implements Listener {
 
         PacketsManager.addPacketListeners();
 
-        listener = new DisguiseListener(this);
-
-        Bukkit.getPluginManager().registerEvents(listener, this);
         Bukkit.getPluginManager().registerEvents(this, this);
     }
 
@@ -53,17 +52,26 @@ public class LibsDisguises extends JavaPlugin implements Listener {
         DisguiseUtilities.saveDisguises();
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onWorldLoad(WorldLoadEvent event) {
+        Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+            @Override
+            public void run() {
+                registerValues();
+            }
+        }, 10L);
+    }
+
     /**
      * Here we create a nms entity for each disguise. Then grab their default values in their datawatcher. Then their
      * sound volume
      * for mob noises. As well as setting their watcher class and entity size.
      */
-    @EventHandler
-    public void registerValues(WorldLoadEvent event) {
-        if (valuesRegistered) return;
-        valuesRegistered = true;
+    public void registerValues() {
+        if (this.valuesRegistered) return;
+        this.valuesRegistered = true;
         DisguiseConfig.initConfig(getConfig());
-        getLogger().info("A world has been loaded. Registering Disguise Values");
+        getLogger().info("A world has been loaded. Registering disguise values.");
 
         for (DisguiseType disguiseType : DisguiseType.values()) {
             if (disguiseType.getEntityType() == null) {
@@ -319,6 +327,11 @@ public class LibsDisguises extends JavaPlugin implements Listener {
 
                 ex.printStackTrace();
             }
+        }
+
+        if (!this.valuesRegistered) {
+            this.listener = new DisguiseListener(this);
+            Bukkit.getPluginManager().registerEvents(this.listener, this);
         }
     }
 
