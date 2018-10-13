@@ -394,10 +394,10 @@ public class MetaIndex<Y> {
 
     public static MetaIndex getFlag(Class<? extends FlagWatcher> watcherClass, int flagNo) {
         for (MetaIndex type : values()) {
-            if (type.getIndex() != flagNo)
+            if (type == null || watcherClass == null)
                 continue;
 
-            if (!type.getFlagWatcher().isAssignableFrom(watcherClass))
+            if (type.getIndex() != flagNo || !type.getFlagWatcher().isAssignableFrom(watcherClass))
                 continue;
 
             return type;
@@ -410,7 +410,10 @@ public class MetaIndex<Y> {
         ArrayList<MetaIndex> list = new ArrayList<>();
 
         for (MetaIndex type : values()) {
-            if (type == null || !type.getFlagWatcher().isAssignableFrom(watcherClass))
+            if (type == null || watcherClass == null)
+                continue;
+
+            if (!type.getFlagWatcher().isAssignableFrom(watcherClass))
                 continue;
 
             list.add(type);
